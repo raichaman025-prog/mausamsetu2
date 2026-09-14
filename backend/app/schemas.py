@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional, List
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
+
 
 
 class LocationOut(BaseModel):
@@ -119,6 +120,7 @@ class EarthquakeEventOut(BaseModel):
 
 
 class EarthquakeRiskOut(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     location_id: int
     hazard_type: str = "earthquake"
     risk_score: float
@@ -155,6 +157,7 @@ class HeatwaveEventOut(BaseModel):
 
 
 class HeatwaveRiskOut(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     location_id: int
     hazard_type: str = "heatwave"
     risk_score: float
@@ -214,6 +217,7 @@ class RiskPredictRequest(BaseModel):
 
 
 class RiskPredictResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     location_id: int
     risk_score: float
     risk_level: str
