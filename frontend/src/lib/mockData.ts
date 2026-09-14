@@ -659,19 +659,23 @@ export function computeVerification(params: {
   };
 }
 
-export let MOCK_REPORTS: CitizenReportT[] = (() => {
+// Declare first as empty array to avoid TDZ when computeVerification() references it during population
+export let MOCK_REPORTS: CitizenReportT[] = [];
+
+// Populate after declaration so MOCK_REPORTS is already initialized (not in TDZ)
+;(() => {
   const types = ["Flood", "Waterlogging", "Heavy Rain", "Road Damage", "Drainage Blockage", "Other"];
   const statuses = ["Pending", "Under Review", "Verified", "Resolved"];
-  const list: CitizenReportT[] = [];
   for (let i = 0; i < 45; i++) {
     const loc = LOCATIONS[Math.floor(rand() * LOCATIONS.length)];
     const type = types[Math.floor(rand() * types.length)];
     const ts = new Date(Date.now() - randRange(1, 400) * 3600 * 1000);
     const verification = computeVerification({
-      location: loc, reportType: type, imageUrl: i % 3 === 0 ? "https://picsum.photos/seed/report" + i + "/400/300" : null,
+      location: loc, reportType: type,
+      imageUrl: i % 3 === 0 ? "https://picsum.photos/seed/report" + i + "/400/300" : null,
       reporterUserId: i % 8 === 0 ? 1 : null, reportTimestamp: ts,
     });
-    list.push({
+    MOCK_REPORTS.push({
       id: i + 1,
       report_code: `MS-2026-${1000 + i}`,
       location_id: loc.id,
@@ -682,14 +686,14 @@ export let MOCK_REPORTS: CitizenReportT[] = (() => {
       reporter_name: i % 8 === 0 ? "Demo Citizen" : `Local Resident ${i}`,
       timestamp: ts.toISOString(),
       severity: ["Low", "Moderate", "High"][Math.floor(rand() * 3)],
-      status: statuses[Math.floor(rand() * statuses.length)],
+      status: statuses[Math.floor(rand() * statuses.length)] as CitizenReportT["status"],
       verification_score: verification.total_score,
       verification_label: verification.label,
       verification,
     });
   }
-  return list;
 })();
+
 
 export function addMockReport(report: {
   location_id: number; location_name?: string; type: string; description: string;
